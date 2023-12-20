@@ -1,5 +1,4 @@
- 
-DROP DATABASE IF EXISTS tienda;
+ DROP DATABASE IF EXISTS tienda;
 CREATE DATABASE tienda CHARACTER SET utf8mb4;
 USE tienda;
 
@@ -40,16 +39,16 @@ INSERT INTO producto VALUES(11, 'Impresora HP Laserjet Pro M26nw', 180, 3);
 
 SELECT nombre FROM producto; -- NOMBRE DE TODOS LOS PRODUCTOS DE LA TABLA PRODUCTO
 SELECT nombre, precio FROM producto; -- LISTA DE NOMBRES Y PRECIOS DE PRODUCTOS DE LA TABLA PRODUCTO
-SELECT * FROM producto; -- TABLA COMPLETA DE PRODUCTO
+SHOW COLUMNS FROM producto; -- CORRECCIÓN: TABLA COMPLETA DE PRODUCTO 
 SELECT nombre, precio , precio * 1.09 from producto; -- LISTA DE PRODUCTOS CON PRECIO EN EUROS Y EN DOLARES
 SELECT nombre AS "Nom de producto", precio AS EUROS, ROUND(precio * 1.09, 2) as "Dòlars nord-americans" from producto; -- LISTA DE PRODUCTOS CON PRECIO EN EUROS Y EN DOLARES CAMBIANDO LOS TITULOS DE LAS COLUMNAS
 SELECT UPPER(nombre) as Nombre_MAYUSCULA, precio  FROM producto; -- LISTA CON LOS PRECIOS Y LOS NOMBRES DE LOS PRODUCTOS EN MAYÚSCULAS
 SELECT LOWER(nombre) as Nombre_minuscula, precio  FROM producto; -- LISTA CON LOS PRECIOS Y LOS NOMBRES DE LOS PRODUCTOS EN MINUSCULAS
 SELECT NOMBRE, CONCAT(UPPER(SUBSTRING(NOMBRE, 1, 2)), SUBSTRING(NOMBRE, 3)) AS "Nombre con dos letras en mayusculas" FROM FABRICANTE; -- LISTA CON DOS PRIMERA LETRAS EN MAYÚSCULAS
 SELECT nombre, ROUND(precio, 2) AS "Precio redondeado" from producto; -- Lista de preoductos con precios redondeados
-SELECT nombre, ROUND(precio, 0) AS "Precio sin decimales" from producto; -- Lista de preoductos con precios sin decimales
-SELECT fabricante.codigo FROM fabricante INNER JOIN producto AS p ON fabricante.codigo = p.codigo_fabricante; -- Llista el codi dels fabricants que tenen productes en la taula "producto"
-SELECT DISTINCT fabricante.codigo FROM fabricante INNER JOIN producto AS p ON fabricante.codigo = p.codigo_fabricante; -- LISTA DEL CODIGO DE FABRICANTE QUE TIENEN PRODUCTO EN LA TABLA "PRODUCTO" SIN REPETIR
+SELECT nombre, TRUNCATE(precio, 0) AS "Precio sin decimales" FROM producto; -- CORRECCIÓN: Lista de preoductos con precios sin decimales
+SELECT fabricante.codigo AS "Código del fabricante" FROM fabricante, producto AS p WHERE fabricante.codigo = p.codigo_fabricante;  -- CORRECCIÓN: Llista el codi dels fabricants que tenen productes en la taula "producto"
+SELECT fabricante.codigo FROM fabricante, producto AS p WHERE fabricante.codigo = p.codigo_fabricante GROUP BY fabricante.codigo HAVING COUNT(p.codigo_fabricante) = 1; -- CORRECCIÓN: LISTA DEL CODIGO DE FABRICANTE QUE TIENEN PRODUCTO EN LA TABLA "PRODUCTO" SIN REPETIR
 SELECT * FROM FABRICANTE ORDER BY NOMBRE ASC; -- LISTA DE NOMBRES DE FABRICANTES EN ORDEN ASCENDENTE
 SELECT * FROM FABRICANTE ORDER BY NOMBRE DESC; -- LISTA DE NOMBRES DE FABRICANTES EN ORDEN DESCENDIENTE
 SELECT * FROM PRODUCTO ORDER BY NOMBRE ASC, PRECIO DESC; -- LISTA ORDENADA POR NOMBRES DE MANERA ASC Y EN CASO IGUAL, POR PRECIO EN ORDEN desc
@@ -65,7 +64,8 @@ SELECT P.NOMBRE AS Nombre_Producto, P.PRECIO AS Precio, F.NOMBRE AS Nombre_Fabri
 SELECT P.NOMBRE AS Nombre_Producto, P.PRECIO AS Precio, F.NOMBRE AS Nombre_Fabricante FROM PRODUCTO P JOIN FABRICANTE F ON P.CODIGO_FABRICANTE = F.CODIGO ORDER BY PRECIO DESC; -- LISTA CON NOMBRE DEL PRODUCTO, SU FABICANTE Y EL PRECIO EN ORDEN DESC
 SELECT NOMBRE FROM PRODUCTO WHERE CODIGO_FABRICANTE = (SELECT CODIGO FROM FABRICANTE WHERE NOMBRE = 'LENOVO'); -- LISTA PRODUCTOS DEL FABRICANTE LENOVO
 SELECT NOMBRE FROM PRODUCTO WHERE CODIGO_FABRICANTE = (SELECT CODIGO FROM FABRICANTE WHERE NOMBRE = 'CRUCIAL' AND PRECIO > 200); -- LISTA DE PRODUCTOS DEL FABRICANTE CRUCIAL CON PRECIO SUPERIOR A 200€
-SELECT NOMBRE FROM PRODUCTO WHERE CODIGO_FABRICANTE = (SELECT CODIGO FROM FABRICANTE WHERE NOMBRE = 'Asus') OR CODIGO_FABRICANTE = (SELECT CODIGO FROM FABRICANTE WHERE NOMBRE = 'Hewlett-Packard') OR CODIGO_FABRICANTE = (SELECT CODIGO FROM FABRICANTE WHERE NOMBRE = 'Seagate'); -- LISTA CON LOS PRODUCTOS DE CIERTOS FABRICANTES
+SELECT p.* FROM producto p JOIN fabricante f ON p.codigo_fabricante = f.codigo WHERE f.nombre IN ('Asus', 'Hewlett-Packard', 'Seagate'); -- CORRECCIÓN LISTA CON LOS PRODUCTOS DE CIERTOS FABRICANTES
+SELECT NOMBRE FROM PRODUCTO WHERE CODIGO_FABRICANTE IN (SELECT CODIGO FROM FABRICANTE WHERE NOMBRE IN ('Asus', 'Hewlett-Packard', 'Seagate')); -- CORRECCIÓN Retorna un llistat amb tots els productes dels fabricants Asus, Hewlett-Packard i Seagate. Usant l'operador IN.
 SELECT P.NOMBRE AS Nombre_Producto, P.PRECIO FROM PRODUCTO P JOIN FABRICANTE F ON P.CODIGO_FABRICANTE = F.CODIGO WHERE RIGHT(F.NOMBRE, 1) = 'e'; -- LISTA DE PRODUCTOS Y PRECIOS, DE FABRICANTES QUE EMPIECEN POR 'E'
 SELECT P.NOMBRE AS Nombre_Producto, P.PRECIO FROM PRODUCTO P JOIN FABRICANTE F ON P.CODIGO_FABRICANTE = F.CODIGO WHERE F.NOMBRE LIKE '%W%'; -- LISTA DE PRODUCTOS Y PRECIOS, DE FABRICANTES QUE TENGAN LA LETRA 'W'
 SELECT P.NOMBRE AS Nombre_Producto, P.PRECIO AS Precio, F.NOMBRE AS Nombre_Fabricante FROM PRODUCTO P JOIN FABRICANTE F ON P.CODIGO_FABRICANTE = F.CODIGO WHERE P.PRECIO >= 180 ORDER BY P.PRECIO DESC, Nombre_Producto ASC; -- LISTA DE NOMBRE DEL PRODUCTO, PRECI(MAYOR DE 180) Y FABRICANTE ORDENADO
@@ -83,7 +83,7 @@ SELECT * FROM PRODUCTO WHERE CODIGO_FABRICANTE = (SELECT CODIGO FROM FABRICANTE 
 DROP DATABASE IF EXISTS universidad;
 CREATE DATABASE universidad CHARACTER SET utf8mb4;
 USE universidad;
-
+ 
 CREATE TABLE departamento (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL
@@ -102,19 +102,19 @@ CREATE TABLE persona (
     sexo ENUM('H', 'M') NOT NULL,
     tipo ENUM('profesor', 'alumno') NOT NULL
 );
-
+ 
 CREATE TABLE profesor (
     id_profesor INT UNSIGNED PRIMARY KEY,
     id_departamento INT UNSIGNED NOT NULL,
     FOREIGN KEY (id_profesor) REFERENCES persona(id),
     FOREIGN KEY (id_departamento) REFERENCES departamento(id)
 );
-
+ 
  CREATE TABLE grado (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL
 );
-
+ 
 CREATE TABLE asignatura (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE asignatura (
     FOREIGN KEY(id_profesor) REFERENCES profesor(id_profesor),
     FOREIGN KEY(id_grado) REFERENCES grado(id)
 );
-
+ 
 CREATE TABLE curso_escolar (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     anyo_inicio YEAR NOT NULL,
@@ -143,7 +143,7 @@ CREATE TABLE alumno_se_matricula_asignatura (
     FOREIGN KEY (id_asignatura) REFERENCES asignatura(id),
     FOREIGN KEY (id_curso_escolar) REFERENCES curso_escolar(id)
 );
-
+ 
  /* Departamento */
 INSERT INTO departamento VALUES (1, 'Informática');
 INSERT INTO departamento VALUES (2, 'Matemáticas');
@@ -154,7 +154,7 @@ INSERT INTO departamento VALUES (6, 'Química y Física');
 INSERT INTO departamento VALUES (7, 'Filología');
 INSERT INTO departamento VALUES (8, 'Derecho');
 INSERT INTO departamento VALUES (9, 'Biología y Geología');
-
+ 
  /* Persona */
 INSERT INTO persona VALUES (1, '26902806M', 'Salvador', 'Sánchez', 'Pérez', 'Almería', 'C/ Real del barrio alto', '950254837', '1991/03/28', 'H', 'alumno');
 INSERT INTO persona VALUES (2, '89542419S', 'Juan', 'Saez', 'Vega', 'Almería', 'C/ Mercurio', '618253876', '1992/08/08', 'H', 'alumno');
@@ -180,7 +180,7 @@ INSERT INTO persona VALUES (21, '79089577Y', 'Juan', 'Gutiérrez', 'López', 'Al
 INSERT INTO persona VALUES (22, '41491230N', 'Antonio', 'Domínguez', 'Guerrero', 'Almería', 'C/ Cabo de Gata', '626652498', '1999/02/11', 'H', 'alumno');
 INSERT INTO persona VALUES (23, '64753215G', 'Irene', 'Hernández', 'Martínez', 'Almería', 'C/ Zapillo', '628452384', '1996/03/12', 'M', 'alumno');
 INSERT INTO persona VALUES (24, '85135690V', 'Sonia', 'Gea', 'Ruiz', 'Almería', 'C/ Mercurio', '678812017', '1995/04/13', 'M', 'alumno');
-
+ 
 /* Profesor */
 INSERT INTO profesor VALUES (3, 1);
 INSERT INTO profesor VALUES (5, 2);
@@ -194,7 +194,7 @@ INSERT INTO profesor VALUES (16, 3);
 INSERT INTO profesor VALUES (17, 4);
 INSERT INTO profesor VALUES (18, 5);
 INSERT INTO profesor VALUES (20, 6);
-
+ 
  /* Grado */
 INSERT INTO grado VALUES (1, 'Grado en Ingeniería Agrícola (Plan 2015)');
 INSERT INTO grado VALUES (2, 'Grado en Ingeniería Eléctrica (Plan 2014)');
@@ -206,7 +206,7 @@ INSERT INTO grado VALUES (7, 'Grado en Biotecnología (Plan 2015)');
 INSERT INTO grado VALUES (8, 'Grado en Ciencias Ambientales (Plan 2009)');
 INSERT INTO grado VALUES (9, 'Grado en Matemáticas (Plan 2010)');
 INSERT INTO grado VALUES (10, 'Grado en Química (Plan 2009)');
-
+ 
 /* Asignatura */
 INSERT INTO asignatura VALUES (1, 'Álgegra lineal y matemática discreta', 6, 'básica', 1, 1, 3, 4);
 INSERT INTO asignatura VALUES (2, 'Cálculo', 6, 'básica', 1, 1, 14, 4);
@@ -344,7 +344,7 @@ INSERT INTO alumno_se_matricula_asignatura VALUES (19, 10, 5);
 
 SELECT apellido1, apellido2, nombre FROM PERSONA WHERE tipo = 'alumno' ORDER BY apellido1, apellido2, nombre asc; -- LISTA DE DATOS DE ALUMNOS ordenado asc
 SELECT nombre, apellido1, apellido2 FROM persona WHERE tipo = 'alumno' AND telefono IS NULL; -- LISTA DE ALUMNOS QUE NO HAN DADO SU TEL
-SELECT nombre, apellido1, apellido2 FROM persona WHERE tipo = 'alumno' AND YEAR(fecha_nacimiento) = 1999; -- LISTA DE ALUMNOS QUE NACIERON EN 1999
+SELECT nombre, apellido1, apellido2 FROM persona WHERE tipo = 'alumno' AND YEAR(fecha_nacimiento) = 1999; -- LISTA DE ALUMNOS QUE NACIERON EN 1999 
 SELECT apellido1, apellido2, nombre FROM persona WHERE tipo = 'profesor' AND telefono IS NULL AND SUBSTRING(nif, -1) = 'K'; -- PROFESORES QUE NO HAN DADO SU TELEFONO Y SU NIF ACABA EN K
 SELECT nombre FROM asignatura WHERE cuatrimestre = 1 AND curso = 3 AND id_grado = 7; -- Llistat de les assignatures que s'imparteixen en el primer quadrimestre, en el tercer curs del grau que té l'identificador 7
 SELECT p.apellido1, p.apellido2, p.nombre, d.nombre AS nom_departament FROM profesor pr JOIN persona p ON pr.id_profesor = p.id JOIN departamento d ON pr.id_departamento = d.id ORDER BY p.nombre, p.apellido1, p.apellido2;
@@ -353,23 +353,21 @@ SELECT DISTINCT d.nombre FROM departamento d JOIN profesor pr ON d.id = pr.id_de
 SELECT DISTINCT p.nombre, p.apellido1, p.apellido2 FROM persona p JOIN alumno_se_matricula_asignatura am ON p.id = am.id_alumno JOIN curso_escolar ce ON am.id_curso_escolar = ce.id WHERE ce.anyo_inicio = 2018 AND ce.anyo_fin = 2019 AND p.tipo = 'alumno'; -- Llistat amb tots els/les alumnes que s'han matriculat en alguna assignatura durant el curs escolar 2018/2019
 
 
-SELECT d.nombre AS nom_departament, p.apellido1, p.apellido2, p.nombre FROM departamento d LEFT JOIN profesor pr ON d.id = pr.id_departamento LEFT JOIN persona p ON pr.id_profesor = p.id ORDER BY nom_departament, p.apellido1, p.apellido2, p.nombre; -- Llistat amb els noms de tots els professors/es i els departaments que tenen vinculats/des
-SELECT p.apellido1, p.apellido2, p.nombre FROM persona p LEFT JOIN profesor pr ON p.id = pr.id_profesor WHERE pr.id_profesor IS NULL; -- Llistat amb els professors/es que no estan associats a un departament
+SELECT d.nombre AS nom_departament, p.apellido1, p.apellido2, p.nombre FROM persona p LEFT JOIN profesor pr ON p.id = pr.id_profesor LEFT JOIN departamento d ON pr.id_departamento = d.id ORDER BY nom_departament DESC, p.apellido1 DESC, p.apellido2 DESC, p.nombre DESC; -- CORRECCIÓN Llistat amb els noms de tots els professors/es i els departaments que tenen vinculats/des
+SELECT p.apellido1, p.apellido2, p.nombre FROM persona p LEFT JOIN profesor pr ON p.id = pr.id_profesor LEFT JOIN departamento d ON pr.id_departamento = d.id WHERE pr.id_profesor IS NULL OR pr.id_departamento IS NULL; -- CORRECCION Llistat amb els professors/es que no estan associats a un departament
 SELECT d.nombre AS nom_departament FROM departamento d LEFT JOIN profesor pr ON d.id = pr.id_departamento WHERE pr.id_profesor IS NULL; -- Llistat amb els departaments que no tenen professors/es associats
-SELECT p.apellido1, p.apellido2, p.nombre FROM persona p LEFT JOIN profesor pr ON p.id = pr.id_profesor LEFT JOIN asignatura a ON pr.id_profesor = a.id_profesor WHERE a.id_profesor IS NULL; -- Listado de profesores que no imparten ninguna asignatura
+SELECT p.id_profesor, pe.nombre AS 'Nombre', pe.apellido1 AS 'Apellido1', pe.apellido2 AS 'Apellido2' FROM profesor p LEFT JOIN persona pe ON p.id_profesor = pe.id WHERE p.id_profesor NOT IN (SELECT DISTINCT id_profesor FROM curso_escolar WHERE YEAR(anyo_inicio) = 2018); -- CORRECCIÓN Listado de profesores que no imparten ninguna asignatura en el curso escolar ultimo (2018)
 SELECT a.nombre AS nom_assignatura FROM asignatura a LEFT JOIN profesor pr ON a.id_profesor = pr.id_profesor WHERE pr.id_profesor IS NULL; -- Listado de asignaturas que no tienen un profesor asignado
-SELECT d.nombre AS nom_departament FROM departamento d LEFT JOIN profesor pr ON d.id = pr.id_departamento LEFT JOIN asignatura a ON pr.id_profesor = a.id_profesor LEFT JOIN alumno_se_matricula_asignatura am ON a.id = am.id_asignatura LEFT JOIN curso_escolar ce ON am.id_curso_escolar = ce.id WHERE a.id_profesor IS NULL AND am.id_curso_escolar IS NULL; -- Listado de departamentos que no han impartido asignaturas en ningún curso escolar
+SELECT p.id_profesor, pe.nombre AS 'Nombre', pe.apellido1 AS 'Apellido1', pe.apellido2 AS 'Apellido2' FROM profesor p LEFT JOIN persona pe ON p.id_profesor = pe.id WHERE p.id_profesor NOT IN (SELECT id_profesor FROM asignatura WHERE id_profesor IS NOT NULL); -- CORRECCIÓN Listado de departamentos que no han impartido asignaturas en ningún curso escolar
 
-
+SELECT COUNT(*) AS total_alumnos FROM persona WHERE tipo = 'alumno'; -- CORRECCIÓN Retorna el nombre total d'alumnes que hi ha.
 SELECT COUNT(*) AS 'Alumnos_Nacidos_1999' FROM persona WHERE tipo = 'alumno' AND YEAR(fecha_nacimiento) = 1999; -- Lista de cuántos alumnos nacieron en 1999
-SELECT d.nombre AS 'Nombre_Departamento', COUNT(p.id_profesor) AS 'Numero_Profesores' FROM departamento d JOIN profesor p ON d.id = p.id_departamento GROUP BY d.id ORDER BY 'Numero_Profesores' DESC; -- Lista de cuántos profesores hay en cada departamento
+SELECT d.nombre AS 'Nombre_Departamento', COUNT(p.id_profesor) AS 'Numero_Profesores' FROM departamento d JOIN profesor p ON d.id = p.id_departamento GROUP BY d.id ORDER BY Numero_Profesores DESC; -- CORRECCIÓN Lista de cuántos profesores hay en cada departamento
 SELECT d.nombre AS 'Nombre_Departamento', COUNT(p.id_profesor) AS 'Numero_Profesores' FROM departamento d LEFT JOIN profesor p ON d.id = p.id_departamento GROUP BY d.id ORDER BY 'Numero_Profesores' DESC; -- Lista con todos los departamentos y el número de profesores/as en cada uno
 SELECT g.nombre AS 'Nombre_Grado', COUNT(a.id) AS 'Numero_Asignaturas' FROM grado g LEFT JOIN asignatura a ON g.id = a.id_grado GROUP BY g.id ORDER BY Numero_Asignaturas DESC; -- Lista de todos los grados con sus asignaturas ordenadas
 SELECT g.nombre AS 'Nombre_Grado', COUNT(a.id) AS 'Numero_Asignaturas' FROM grado g LEFT JOIN asignatura a ON g.id = a.id_grado GROUP BY g.id HAVING Numero_Asignaturas > 40; -- Lista con los grados con mas de 40 asignaturas
 SELECT g.nombre AS 'Nombre_Grado', a.tipo AS 'Tipo_Asignatura', SUM(a.creditos) AS 'Total_Creditos' FROM grado g LEFT JOIN asignatura a ON g.id = a.id_grado GROUP BY g.id, a.tipo; -- Lista con el nombre de los grados y la suma del número total de créditos por tipo de asignatura
 SELECT ce.anyo_inicio AS 'Año_Inicio_Curso', COUNT(DISTINCT ama.id_alumno) AS 'Alumnos_Matriculados' FROM curso_escolar ce LEFT JOIN alumno_se_matricula_asignatura ama ON ce.id = ama.id_curso_escolar GROUP BY ce.id; -- Lista con cuántos alumnos se han matriculado de alguna asignatura en cada uno de los cursos escolares
-SELECT p.id_profesor AS 'ID_Profesor', pe.nombre AS 'Nombre', pe.apellido1 AS 'Primer_Cognom', pe.apellido2 AS 'Segundo_Cognom', COUNT(a.id) AS 'Numero_Asignaturas' FROM persona pe JOIN profesor p ON pe.id = p.id_profesor LEFT JOIN asignatura a ON p.id_profesor = a.id_profesor GROUP BY p.id_profesor ORDER BY 'Numero_Asignaturas' DESC; -- Lista con datos de los profesores y el total de sus asignaturas
+SELECT p.id_profesor AS ID_Profesor, pe.nombre AS Nombre, pe.apellido1 AS Primer_Cognom, pe.apellido2 AS Segundo_Cognom, COUNT(a.id) AS Numero_Asignaturas FROM persona pe JOIN profesor p ON pe.id = p.id_profesor LEFT JOIN asignatura a ON p.id_profesor = a.id_profesor GROUP BY p.id_profesor ORDER BY Numero_Asignaturas DESC; -- Lista con datos de los profesores y el total de sus asignaturas
 SELECT * FROM persona WHERE tipo = 'alumno' ORDER BY fecha_nacimiento DESC LIMIT 1; -- Datos del alumno mas joven
 SELECT p.id_profesor AS 'ID_Profesor', pe.nombre AS 'Nombre', pe.apellido1 AS 'Primer_Cognom', pe.apellido2 AS 'Segundo_Cognom', COUNT(a.id) AS 'Numero_Asignaturas' FROM persona pe JOIN profesor p ON pe.id = p.id_profesor LEFT JOIN asignatura a ON p.id_profesor = a.id_profesor WHERE p.id_departamento IS NOT NULL AND a.id IS NULL GROUP BY p.id_profesor ORDER BY 'Numero_Asignaturas' DESC; -- Lista con los profesores que tienen un departamento asociado y que no imparten ninguna asignatura
-
-
