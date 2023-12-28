@@ -1,10 +1,9 @@
-
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 DROP DATABASE IF EXISTS Pizzeria;
-CREATE DATABASE Pizzeria CHARACTER SET utf8mb4;
+CREATE DATABASE Pizzeria CHARACTER SET utf8;
 USE Pizzeria;
 
 -- -----------------------------------------------------
@@ -12,13 +11,13 @@ USE Pizzeria;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Cliente` (
   `id` INT NOT NULL,
-  `Nombre` VARCHAR(45) NOT NULL,
-  `Apellidos` VARCHAR(100) NOT NULL,
-  `Direccion` VARCHAR(45) NOT NULL,
-  `CodigoPostal` INT NOT NULL,
-  `Ciudad` VARCHAR(45) NOT NULL,
-  `Provincia` VARCHAR(45) NOT NULL,
-  `Telefono` VARCHAR(45) NOT NULL,
+  `nombre` VARCHAR(45) NOT NULL,
+  `apellido` VARCHAR(100) NOT NULL,
+  `direccion` VARCHAR(45) NOT NULL,
+  `codigo_postal` INT NOT NULL,
+  `ciudad` VARCHAR(45) NOT NULL,
+  `provincia` VARCHAR(45) NOT NULL,
+  `telefono` INT NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -28,10 +27,10 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Tienda` (
   `id` INT NOT NULL,
-  `Direccion` VARCHAR(45) NOT NULL,
-  `CodigoPostal` INT NOT NULL,
-  `Ciudad` VARCHAR(45) NOT NULL,
-  `Provincia` VARCHAR(45) NOT NULL,
+  `direccion` VARCHAR(45) NOT NULL,
+  `codigo_postal` INT NOT NULL,
+  `ciudad` VARCHAR(45) NOT NULL,
+  `provincia` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
@@ -41,22 +40,22 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Comanda` (
   `id` INT NOT NULL,
-  `Fecha_hora` VARCHAR(45) NOT NULL,
-  `Tipo_entrega` VARCHAR(45) NOT NULL,
-  `Cantidad_productos` INT NOT NULL,
-  `Precio` INT NOT NULL,
+  `fecha_hora` DATETIME NOT NULL,
+  `tipo_entrega` ENUM('Recogida', 'Domicilio') NOT NULL,
+  `cantidad` INT NOT NULL,
+  `precio` DOUBLE NOT NULL,
   `cliente_id` INT NOT NULL,
-  `Tienda_id` INT NOT NULL,
+  `tienda_id` INT NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_Comanda_cliente1_idx` (`cliente_id` ASC) VISIBLE,
-  INDEX `fk_Comanda_Tienda1_idx` (`Tienda_id` ASC) VISIBLE,
+  INDEX `fk_Comanda_Tienda1_idx` (`tienda_id` ASC) VISIBLE,
   CONSTRAINT `fk_Comanda_cliente1`
     FOREIGN KEY (`cliente_id`)
     REFERENCES `Cliente` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Comanda_Tienda1`
-    FOREIGN KEY (`Tienda_id`)
+    FOREIGN KEY (`tienda_id`)
     REFERENCES `Tienda` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -64,58 +63,12 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Hamburguesa`
+-- Table `Categoria_pizza`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Hamburguesa` (
+CREATE TABLE IF NOT EXISTS `Categoria_pizza` (
   `id` INT NOT NULL,
-  `Nombre` VARCHAR(45) NOT NULL,
-  `Descipcion` TEXT(200) NOT NULL,
-  `Foto` BLOB NOT NULL,
-  `Precio` INT NOT NULL,
+  `nombre` ENUM('Rustica', 'Fina') NOT NULL,
   PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Bebida`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Bebida` (
-  `id` INT NOT NULL,
-  `Nombre` VARCHAR(45) NOT NULL,
-  `Descipcion` TEXT(200) NOT NULL,
-  `Foto` BLOB NOT NULL,
-  `Precio` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Categoria`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Categoria` (
-  `id` INT NOT NULL,
-  `nombre` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Pizza`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Pizza` (
-  `id` INT NOT NULL,
-  `Nombre` VARCHAR(45) NOT NULL,
-  `Descripcion` TEXT(200) NOT NULL,
-  `Foto` BLOB NOT NULL,
-  `Precio` INT NOT NULL,
-  `Categoria_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_Pizza_Categoria1_idx` (`Categoria_id` ASC) VISIBLE,
-  CONSTRAINT `fk_Pizza_Categoria1`
-    FOREIGN KEY (`Categoria_id`)
-    REFERENCES `Categoria` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -124,30 +77,72 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Producto` (
   `id` INT NOT NULL,
-  `Hamburguesa_id` INT ,
-  `Bebida_id` INT ,
-  `Pizza_id` INT ,
+  `nombre_pizza` VARCHAR(45) NULL,
+  `descripcion_pizza` TEXT(150) NULL,
+  `foto_pizza` BLOB NULL,
+  `precio_pizza` DOUBLE NULL,
+  `Categoria_pizza_id` INT NULL,
+  `nombre_hamburguesa` VARCHAR(45) NULL,
+  `descripcion_hamburguera` TEXT(150) NULL,
+  `foto_hamburguesa` BLOB NULL,
+  `precio_hamburguesa` DOUBLE NULL,
+  `nombre_bebida` VARCHAR(45) NULL,
+  `descripcion_bebida` TEXT(150) NULL,
+  `foto_bebida` BLOB NULL,
+  `precio_bebida` DOUBLE NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Producto_Hamburguesa1_idx` (`Hamburguesa_id` ASC) VISIBLE,
-  INDEX `fk_Producto_Bebida1_idx` (`Bebida_id` ASC) VISIBLE,
-  INDEX `fk_Producto_Pizza1_idx` (`Pizza_id` ASC) VISIBLE,
-  CONSTRAINT `fk_Producto_Hamburguesa1`
-    FOREIGN KEY (`Hamburguesa_id`)
-    REFERENCES `Hamburguesa` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Producto_Bebida1`
-    FOREIGN KEY (`Bebida_id`)
-    REFERENCES `Bebida` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Producto_Pizza1`
-    FOREIGN KEY (`Pizza_id`)
-    REFERENCES `Pizza` (`id`)
+  INDEX `fk_Producto_Categoria_pizza1_idx` (`Categoria_pizza_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Producto_Categoria_pizza1`
+    FOREIGN KEY (`Categoria_pizza_id`)
+    REFERENCES `Categoria_pizza` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `Trabajador`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Trabajador` (
+  `id` INT NOT NULL,
+  `nombre` VARCHAR(45) NOT NULL,
+  `apellidos` VARCHAR(45) NOT NULL,
+  `DNI` VARCHAR(50) NOT NULL,
+  `telefono` INT NOT NULL,
+  `funcion_trabajo` ENUM('Cocinero', 'Repartidor') NOT NULL,
+  `tienda_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_Trabajador_Tienda1_idx` (`tienda_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Trabajador_Tienda1`
+    FOREIGN KEY (`tienda_id`)
+    REFERENCES `Tienda` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Trabajador_has_Comanda`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Trabajador_has_Comanda` (
+  `id` INT NOT NULL,
+  `trabajador_id` INT NOT NULL,
+  `comanda_id` INT NOT NULL,
+  `fecha_hora` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_Trabajador_has_Comanda_Comanda1_idx` (`comanda_id` ASC) VISIBLE,
+  INDEX `fk_Trabajador_has_Comanda_Trabajador1_idx` (`trabajador_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Trabajador_has_Comanda_Trabajador1`
+    FOREIGN KEY (`trabajador_id`)
+    REFERENCES `Trabajador` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Trabajador_has_Comanda_Comanda1`
+    FOREIGN KEY (`comanda_id`)
+    REFERENCES `Comanda` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `Comanda_has_Producto`
@@ -169,52 +164,7 @@ CREATE TABLE IF NOT EXISTS `Comanda_has_Producto` (
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
-
-
--- -----------------------------------------------------
--- Table `Trabajador`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Trabajador` (
-  `id` INT NOT NULL,
-  `Nombre` VARCHAR(45) NOT NULL,
-  `Apellidos` VARCHAR(45) NOT NULL,
-  `DNI` VARCHAR(50) NOT NULL,
-  `Telefono` INT NOT NULL,
-  `FuncionTrabajo` ENUM('Cocinero', 'Repartidor') NOT NULL,
-  `Tienda_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_Trabajador_Tienda1_idx` (`Tienda_id` ASC) VISIBLE,
-  CONSTRAINT `fk_Trabajador_Tienda1`
-    FOREIGN KEY (`Tienda_id`)
-    REFERENCES `Tienda` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Trabajador_has_Comanda`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Trabajador_has_Comanda` (
-  `id` VARCHAR(45) NOT NULL,
-  `Trabajador_id` INT NOT NULL,
-  `Comanda_id` INT NOT NULL,
-  `Fecha_hora` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_Trabajador_has_Comanda_Comanda1_idx` (`Comanda_id` ASC) VISIBLE,
-  INDEX `fk_Trabajador_has_Comanda_Trabajador1_idx` (`Trabajador_id` ASC) VISIBLE,
-  CONSTRAINT `fk_Trabajador_has_Comanda_Trabajador1`
-    FOREIGN KEY (`Trabajador_id`)
-    REFERENCES `Trabajador` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Trabajador_has_Comanda_Comanda1`
-    FOREIGN KEY (`Comanda_id`)
-    REFERENCES `Comanda` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+ 
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
