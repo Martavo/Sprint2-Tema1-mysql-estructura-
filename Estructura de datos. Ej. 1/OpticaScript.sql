@@ -57,7 +57,14 @@ CREATE TABLE IF NOT EXISTS `cliente` (
   `telefono` INT NOT NULL,
   `email` VARCHAR(105) NOT NULL,
   `fecha_registro` DATE NOT NULL,
-  PRIMARY KEY (`id`))
+  `id_recomendado` INT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `id_recomendacion_idx` (`id_recomendado` ASC) VISIBLE,
+  CONSTRAINT `id_recomendacion`
+    FOREIGN KEY (`id_recomendado`)
+    REFERENCES `cliente` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -99,36 +106,6 @@ CREATE TABLE IF NOT EXISTS `venta` (
   CONSTRAINT `fk_venta_gafas1`
     FOREIGN KEY (`gafas_id`)
     REFERENCES `gafas` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `recomendacion`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `recomendacion` (
-  `id` INT NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `cliente_has_recomendacion`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `cliente_has_recomendacion` (
-  `cliente_id` INT NOT NULL,
-  `recomendacion_id` INT NOT NULL,
-  INDEX `cliente_id_idx` (`cliente_id` ASC) VISIBLE,
-  INDEX `fk_cliente_has_recomendacion_recomendacion1_idx` (`recomendacion_id` ASC) VISIBLE,
-  CONSTRAINT `cliente_id`
-    FOREIGN KEY (`cliente_id`)
-    REFERENCES `cliente` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_cliente_has_recomendacion_recomendacion1`
-    FOREIGN KEY (`recomendacion_id`)
-    REFERENCES `recomendacion` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
