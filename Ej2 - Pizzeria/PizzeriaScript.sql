@@ -36,19 +36,58 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
+-- Table `Trabajador`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Trabajador` (
+  `id` INT NOT NULL,
+  `nombre` VARCHAR(45) NOT NULL,
+  `apellidos` VARCHAR(45) NOT NULL,
+  `DNI` VARCHAR(50) NOT NULL,
+  `telefono` INT NOT NULL,
+  `funcion_trabajo` ENUM('Cocinero', 'Repartidor') NOT NULL,
+  `tienda_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_Trabajador_Tienda1_idx` (`tienda_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Trabajador_Tienda1`
+    FOREIGN KEY (`tienda_id`)
+    REFERENCES `Tienda` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Reparto`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `Reparto` (
+  `id` INT NOT NULL,
+  `trabajador_id` INT NOT NULL,
+  `fecha_hora` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_Trabajador_has_Comanda_Trabajador1_idx` (`trabajador_id` ASC) VISIBLE,
+  CONSTRAINT `fk_Trabajador_has_Comanda_Trabajador1`
+    FOREIGN KEY (`trabajador_id`)
+    REFERENCES `Trabajador` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `Comanda`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Comanda` (
   `id` INT NOT NULL,
   `fecha_hora` DATETIME NOT NULL,
   `tipo_entrega` ENUM('Recogida', 'Domicilio') NOT NULL,
-  `cantidad` INT NOT NULL,
   `precio` DOUBLE NOT NULL,
   `cliente_id` INT NOT NULL,
   `tienda_id` INT NOT NULL,
+  `reparto_id` INT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_Comanda_cliente1_idx` (`cliente_id` ASC) VISIBLE,
   INDEX `fk_Comanda_Tienda1_idx` (`tienda_id` ASC) VISIBLE,
+  INDEX `reparto_id_idx` (`reparto_id` ASC) VISIBLE,
   CONSTRAINT `fk_Comanda_cliente1`
     FOREIGN KEY (`cliente_id`)
     REFERENCES `Cliente` (`id`)
@@ -57,6 +96,11 @@ CREATE TABLE IF NOT EXISTS `Comanda` (
   CONSTRAINT `fk_Comanda_Tienda1`
     FOREIGN KEY (`tienda_id`)
     REFERENCES `Tienda` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `reparto_id`
+    FOREIGN KEY (`reparto_id`)
+    REFERENCES `Reparto` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -101,64 +145,21 @@ ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Trabajador`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Trabajador` (
-  `id` INT NOT NULL,
-  `nombre` VARCHAR(45) NOT NULL,
-  `apellidos` VARCHAR(45) NOT NULL,
-  `DNI` VARCHAR(50) NOT NULL,
-  `telefono` INT NOT NULL,
-  `funcion_trabajo` ENUM('Cocinero', 'Repartidor') NOT NULL,
-  `tienda_id` INT NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_Trabajador_Tienda1_idx` (`tienda_id` ASC) VISIBLE,
-  CONSTRAINT `fk_Trabajador_Tienda1`
-    FOREIGN KEY (`tienda_id`)
-    REFERENCES `Tienda` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
-
--- -----------------------------------------------------
--- Table `Trabajador_has_Comanda`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Trabajador_has_Comanda` (
-  `id` INT NOT NULL,
-  `trabajador_id` INT NOT NULL,
-  `comanda_id` INT NOT NULL,
-  `fecha_hora` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`),
-  INDEX `fk_Trabajador_has_Comanda_Comanda1_idx` (`comanda_id` ASC) VISIBLE,
-  INDEX `fk_Trabajador_has_Comanda_Trabajador1_idx` (`trabajador_id` ASC) VISIBLE,
-  CONSTRAINT `fk_Trabajador_has_Comanda_Trabajador1`
-    FOREIGN KEY (`trabajador_id`)
-    REFERENCES `Trabajador` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Trabajador_has_Comanda_Comanda1`
-    FOREIGN KEY (`comanda_id`)
-    REFERENCES `Comanda` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
--- -----------------------------------------------------
 -- Table `Comanda_has_Producto`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `Comanda_has_Producto` (
-  `Comanda_id` INT NOT NULL,
-  `Producto_id` INT NOT NULL,
-  INDEX `fk_Comanda_has_Producto_Producto1_idx` (`Producto_id` ASC) VISIBLE,
-  INDEX `fk_Comanda_has_Producto_Comanda1_idx` (`Comanda_id` ASC) VISIBLE,
+  `comanda_id` INT NOT NULL,
+  `producto_id` INT NOT NULL,
+  `cantidad` INT NOT NULL,
+  INDEX `fk_Comanda_has_Producto_Producto1_idx` (`producto_id` ASC) VISIBLE,
+  INDEX `fk_Comanda_has_Producto_Comanda1_idx` (`comanda_id` ASC) VISIBLE,
   CONSTRAINT `fk_Comanda_has_Producto_Comanda1`
-    FOREIGN KEY (`Comanda_id`)
+    FOREIGN KEY (`comanda_id`)
     REFERENCES `Comanda` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Comanda_has_Producto_Producto1`
-    FOREIGN KEY (`Producto_id`)
+    FOREIGN KEY (`producto_id`)
     REFERENCES `Producto` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
