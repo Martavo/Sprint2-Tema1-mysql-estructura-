@@ -1,10 +1,10 @@
 -- Insertar datos de clientes
-INSERT INTO cliente (id, nombre, direccion, telefono, email, fecha_registro) VALUES 
-(1,'Maite Ortiz Lopez', 'C/Topete 176 1 3 08221 Terrassa España', 936726487, 'maite@gmail.com', '2023-04-30'),
-(2,'Pedro Garcia Orta', 'C/Rosamar 23 3 1 08223 Terrassa España', 937654345, 'pedro@gmail.com', '2021-02-21'),
-(3, 'Xavi Gomez Lopez', 'C/Beethoven 23 7 3 08225 Terrassa España', 936726476, 'xavi@gmail.com', '2022-10-15'),
-(4, 'Juan Carlos Leon Sanchez', 'C/Nova 9 2 5 08221 Terrassa España', 936726190, 'juancarlos@gmail.com', '2020-07-10'),
-(5, 'Lucia Cordoba Pino', 'C/Corsega 123 6 1 08222 Terrassa España', 936726677, 'lucia@gmail.com', '2021-11-25');
+INSERT INTO cliente (id, nombre, direccion, telefono, email, fecha_registro, id_recomendado) VALUES 
+(1,'Maite Ortiz Lopez', 'C/Topete 176 1 3 08221 Terrassa España', 936726487, 'maite@gmail.com', '2023-04-30', null),
+(2,'Pedro Garcia Orta', 'C/Rosamar 23 3 1 08223 Terrassa España', 937654345, 'pedro@gmail.com', '2021-02-21', 1),
+(3, 'Xavi Gomez Lopez', 'C/Beethoven 23 7 3 08225 Terrassa España', 936726476, 'xavi@gmail.com', '2022-10-15', 1),
+(4, 'Juan Carlos Leon Sanchez', 'C/Nova 9 2 5 08221 Terrassa España', 936726190, 'juancarlos@gmail.com', '2020-07-10', 3),
+(5, 'Lucia Cordoba Pino', 'C/Corsega 123 6 1 08222 Terrassa España', 936726677, 'lucia@gmail.com', '2021-11-25', null);
 
 
 -- Insertar datos de proveedores
@@ -44,16 +44,3 @@ INSERT INTO venta (id, id_empleado, id_clientes, gafas_id, tiempo_venta) VALUES
 (6, 3, 3, 2, '2023-12-11 00:57:20');
 
 
-
--- Relacionar el cliente con la recomendación
-INSERT INTO cliente_has_recomendacion (cliente_id, recomendacion_id) VALUES 
-(4, 1),
-(2, 2),
-(3, 3);
-
-
--- Insertar datos en la tabla 'recomendacion'
-INSERT INTO recomendacion (id) VALUES 
-(1),
-(2),
-(3);
