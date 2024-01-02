@@ -21,11 +21,11 @@ INSERT INTO Trabajador (id, nombre, apellidos, DNI, telefono, funcion_trabajo, t
 (4, 'Curro', 'Fedez Martinez', '67945673N', 688764534, 'Repartidor', 2);
 
 -- COMANDA
-INSERT INTO Comanda (id, fecha_hora, tipo_entrega, cantidad, precio, cliente_id, tienda_id) VALUES 
-(1, '2023-04-01 14:50:00', 'Domicilio', 2, 14.3, 1, 1),
-(2, '2023-04-11 12:10:00', 'Recogida', 1, 12.5, 2, 1),
-(3, '2023-04-15 12:53:00', 'Recogida', 4, 46.5, 3, 2),
-(4, '2023-04-20 16:06:00', 'Domicilio', 1, 13, 4, 2);
+INSERT INTO Comanda (id, fecha_hora, tipo_entrega, precio, cliente_id, tienda_id, reparto_is) VALUES 
+(1, '2023-04-01 14:50:00', 'Domicilio', 14.3, 1, 1, 1),
+(2, '2023-04-11 12:10:00', 'Recogida', 12.5, 2, 1, null),
+(3, '2023-04-15 12:53:00', 'Recogida', 46.5, 3, 2, null),
+(4, '2023-04-20 16:06:00', 'Domicilio', 13, 4, 2, 2);
 
 
 -- CATEGORIA
@@ -44,21 +44,21 @@ INSERT INTO Producto (id, nombre_pizza, descripcion_pizza, foto_pizza, precio_pi
   (7, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Agua', 'Agua mineral sin gas', 'foto_en_blob', 1.6);
 
 -- COMANDA_HAS_PRODUCTO
-INSERT INTO Comanda_has_Producto (comanda_id, producto_id)
+INSERT INTO Comanda_has_Producto (comanda_id, producto_id, cantidad)
 VALUES
-  (1, 1),
-  (1, 6),
-  (2, 4),
-  (3, 2),
-  (3, 6),
-  (3, 4),
-  (3, 2),
-  (4, 5);
+  (1, 1, 1),
+  (1, 6, 2),
+  (2, 4, 1),
+  (3, 2, 1),
+  (3, 6, 2),
+  (3, 4, 1),
+  (3, 2, 1),
+  (4, 5, 1);
   
 -- TRABAJADOR_HAS_COMANDA
-INSERT INTO Trabajador_has_Comanda (id, trabajador_id, comanda_id, fecha_hora) VALUES 
-('1', 2, 1, '2023-04-01 15:15:00'),
-('2', 4, 4, '2023-04-20 16:25:00');
+INSERT INTO Reparto (id, trabajador_id, fecha_hora) VALUES 
+('1', 2, '2023-04-01 15:15:00'),
+('2', 4, '2023-04-20 16:25:00');
 
 
 
